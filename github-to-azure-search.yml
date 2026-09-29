@@ -1,0 +1,46 @@
+name: Push multi-org repo content to Azure AI Search
+
+on:
+  workflow_dispatch: {}          # manual trigger from the Actions tab
+  schedule:
+    - cron: "0 2 * * *"          # daily at 02:00 UTC - cross-org content
+                                  # usually isn't triggered by a single push
+
+permissions:
+  contents: read
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install azure-search-documents requests
+
+      - name: Push content to Azure AI Search
+        env:
+          # NOTE: secrets.GITHUB_TOKEN (the Actions auto-token) will NOT
+          # work here - it only has access to the repo the workflow lives
+          # in. Use a classic PAT (repo scope, SSO-authorized for every
+          # target org) or a GitHub App installation token instead.
+          # Store it as a repo/org secret named GH_MULTI_ORG_TOKEN.
+          GITHUB_TOKEN: ${{ secrets.GH_MULTI_ORG_TOKEN }}
+
+          # Comma-separated list - each entry is "owner/repo" OR just an
+          # org name (auto-expands to every repo in that org). E.g.:
+          # "org1/repoA,org2,org3/some-repo"
+          # Store as a secret if the list itself is sensitive, or as a
+          # plain repo variable (Settings -> Secrets and variables ->
+          # Actions -> Variables) if it isn't.
+          GITHUB_REPOS: ${{ secrets.GITHUB_REPOS }}
+
+          GITHUB_BRANCH: main
+
+          AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+          AZURE_SEARCH_INDEX: ${{ secrets.AZURE_SEARCH_INDEX }}
+          AZURE_SEARCH_KEY: ${{ secrets.AZURE_SEARCH_KEY }}
+        run: python github_to_azure_search.py
