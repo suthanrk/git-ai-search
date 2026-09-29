@@ -38,7 +38,7 @@ jobs:
           # Actions -> Variables) if it isn't.
           GH_REPOS: ${{ secrets.GH_REPOS }}
 
-          GITHUB_BRANCH: main
+          GITHUB_BRANCH: master
 
           AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
           AZURE_SEARCH_INDEX: ${{ secrets.AZURE_SEARCH_INDEX }}
