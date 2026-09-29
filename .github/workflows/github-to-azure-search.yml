@@ -36,7 +36,7 @@ jobs:
           # Store as a secret if the list itself is sensitive, or as a
           # plain repo variable (Settings -> Secrets and variables ->
           # Actions -> Variables) if it isn't.
-          GITHUB_REPOS: ${{ secrets.GITHUB_REPOS }}
+          GH_REPOS: ${{ secrets.GH_REPOS }}
 
           GITHUB_BRANCH: main
 
