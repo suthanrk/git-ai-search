@@ -106,7 +106,7 @@ def list_org_repos(org):
     repos = []
     page = 1
     while True:
-        url = f"{GITHUB_API_BASE}/orgs/{org}/repos?per_page=100&page={page}&type=all"
+        url = f"{GITHUB_API_BASE}/users/{org}/repos?per_page=100&page={page}&type=all"
         resp = requests.get(url, headers=github_headers(), timeout=30)
         if resp.status_code == 404:
             print(f"  WARNING: org '{org}' not found or token lacks access - skipping.")
