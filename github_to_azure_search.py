@@ -106,7 +106,7 @@ def list_org_repos(org):
     repos = []
     page = 1
     while True:
-        url = f"{GITHUB_API_BASE}/users/{org}/repos?per_page=100&page={page}&type=all"
+        url = f"{GITHUB_API_BASE}/orgs/{org}/repos?per_page=100&page={page}&type=all"
         resp = requests.get(url, headers=github_headers(), timeout=30)
         if resp.status_code == 404:
             print(f"  WARNING: org '{org}' not found or token lacks access - skipping.")
@@ -234,8 +234,9 @@ def build_documents_for_repo(repo, branch):
     files = list_repo_files(repo, branch)
     print(f"  {repo}@{branch}: {len(files)} candidate files")
 
-    for f in files:
+    for i, f in enumerate(files, 1):
         path = f["path"]
+        print(f"    [{i}/{len(files)}] fetching {path} ...")
         content = fetch_file_content(repo, f["sha"])
         if content is None:
             continue
@@ -277,19 +278,17 @@ def push_to_azure_search(documents, batch_size=1000):
 
 
 def main():
-    all_documents = []
-
     repos = expand_repo_list(GH_REPOS_RAW)
     print(f"Processing {len(repos)} repo(s) across their respective orgs:")
+
+    total_docs = 0
     for repo, branch in repos:
         docs = build_documents_for_repo(repo, branch)
-        all_documents.extend(docs)
+        total_docs += len(docs)
+        print(f"  Pushing {len(docs)} docs from {repo} to '{AZURE_SEARCH_INDEX}' ...")
+        push_to_azure_search(docs)   # push per repo -> incremental progress + no all-or-nothing loss
 
-    print(f"Built {len(all_documents)} search documents total (after chunking).")
-
-    print(f"Pushing documents to Azure AI Search index '{AZURE_SEARCH_INDEX}' ...")
-    push_to_azure_search(all_documents)
-
+    print(f"Built and pushed {total_docs} search documents total (after chunking).")
     print("Done.")
 
 
