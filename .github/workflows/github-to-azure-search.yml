@@ -43,4 +43,4 @@ jobs:
           AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
           AZURE_SEARCH_INDEX: ${{ secrets.AZURE_SEARCH_INDEX }}
           AZURE_SEARCH_KEY: ${{ secrets.AZURE_SEARCH_KEY }}
-        run: python ../../github_to_azure_search.py
+        run: python github_to_azure_search.py
