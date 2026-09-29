@@ -85,7 +85,7 @@ AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
 AZURE_SEARCH_KEY = os.environ["AZURE_SEARCH_KEY"]
 
 # Only these extensions get indexed. Adjust to your needs.
-ALLOWED_EXTENSIONS = {".md", ".py", ".txt", ".json", ".yaml", ".yml", ".ps1", ".tf"}
+ALLOWED_EXTENSIONS = {".md", ".py", ".txt", ".json", ".yaml", ".yml", ".ps1", ".tf", ".json", ".js"}
 
 # Files larger than this are skipped (bytes). Avoids binary/huge files.
 MAX_FILE_SIZE_BYTES = 500_000
@@ -175,8 +175,6 @@ def list_repo_files(repo, branch):
             continue
         path = item["path"]
         _, ext = os.path.splitext(path)
-        if ext.lower() not in ALLOWED_EXTENSIONS:
-            continue
         if item.get("size", 0) > MAX_FILE_SIZE_BYTES:
             print(f"  Skipping {repo}:{path} (too large: {item.get('size')} bytes)")
             continue
