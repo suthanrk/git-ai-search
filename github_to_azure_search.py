@@ -25,7 +25,7 @@ Prerequisites
                                   repo the pipeline runs in. Use a classic PAT
                                   (repo scope, authorized for SSO on each org)
                                   or a GitHub App installation token instead.
-       GITHUB_REPOS           -> Comma-separated list. Each entry is EITHER:
+       GH_REPOS           -> Comma-separated list. Each entry is EITHER:
                                     - an explicit "owner/repo", or
                                     - just an org name, e.g. "org2",
                                       which auto-expands to every repo in
@@ -73,7 +73,7 @@ GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
 
 # Raw entries as given, e.g. "org1/repoA,org2,org3/some-repo" -> a list of
 # strings; each is either "owner/repo" or a bare org name to be expanded.
-GITHUB_REPOS_RAW = [r.strip() for r in os.environ["GITHUB_REPOS"].split(",") if r.strip()]
+GH_REPOS_RAW = [r.strip() for r in os.environ["GH_REPOS"].split(",") if r.strip()]
 
 DEFAULT_BRANCH = os.environ.get("GITHUB_BRANCH", "main")
 
@@ -279,7 +279,7 @@ def push_to_azure_search(documents, batch_size=1000):
 def main():
     all_documents = []
 
-    repos = expand_repo_list(GITHUB_REPOS_RAW)
+    repos = expand_repo_list(GH_REPOS_RAW)
     print(f"Processing {len(repos)} repo(s) across their respective orgs:")
     for repo, branch in repos:
         docs = build_documents_for_repo(repo, branch)
