@@ -2,9 +2,7 @@ name: Push multi-org repo content to Azure AI Search
 
 on:
   workflow_dispatch: {}          # manual trigger from the Actions tab
-  schedule:
-    - cron: "0 2 * * *"          # daily at 02:00 UTC - cross-org content
-                                  # usually isn't triggered by a single push
+  push:
 
 permissions:
   contents: read
@@ -13,6 +11,8 @@ jobs:
   index:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -43,4 +43,4 @@ jobs:
           AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
           AZURE_SEARCH_INDEX: ${{ secrets.AZURE_SEARCH_INDEX }}
           AZURE_SEARCH_KEY: ${{ secrets.AZURE_SEARCH_KEY }}
-        run: python github_to_azure_search.py
+        run: ../../python github_to_azure_search.py
